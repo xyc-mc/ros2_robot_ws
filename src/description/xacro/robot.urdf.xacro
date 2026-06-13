@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot">
+    
+    <xacro:include filename="$(find description)/xacro/base.urdf.xacro"/>
+    <xacro:include filename="$(find description)/xacro/imu.urdf.xacro"/>
+    <xacro:include filename="$(find description)/xacro/camera.urdf.xacro"/>
+    <xacro:include filename="$(find description)/xacro/laser.urdf.xacro"/>
+    <xacro:include filename="$(find description)/xacro/wheel.urdf.xacro"/>
+    <xacro:include filename="$(find description)/xacro/caster.urdf.xacro"/>
+    <xacro:include filename="$(find description)/xacro/gazebo_sensor_plugin.xacro"/>
+    <xacro:include filename="$(find description)/xacro/ros2_control.xacro"/>
+
+    <xacro:base_xacro length="0.12" radius="0.10"/>
+    <xacro:imu_xacro xyz="0.0 0.0 0.02"/>
+    <xacro:camera_xacro xyz="0.10 0.0 0.075"/>
+    <xacro:laser_xacro xyz="0.0 0.0 0.10"/>
+
+    <xacro:wheel_xacro wheel_name="left_wheel" xyz="0.0 0.10 -0.06"/>
+    <xacro:wheel_xacro wheel_name="right_wheel" xyz="0.0 -0.10 -0.06"/>
+    <xacro:caster_xacro caster_name="front_caster" xyz="0.08 0.0 -0.076"/>
+    <xacro:caster_xacro caster_name="back_caster" xyz="-0.08 0.0 -0.076"/>
+
+    <xacro:gazebo_sensor_plugin />
+    <xacro:ros2_control />
+
+    
+</robot>
