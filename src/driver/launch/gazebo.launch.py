@@ -17,7 +17,7 @@ def generate_launch_description():
     urdf_package_path = get_package_share_directory('description')
 
     default_urdf_path = os.path.join(urdf_package_path, 'xacro', 'robot.urdf.xacro')
-    default_world_path = os.path.join(urdf_package_path, 'world', 'room.world')
+    default_world_path = os.path.join(urdf_package_path, 'world', 'multi_floor_ramp.world')
 
     declare_urdf_path = DeclareLaunchArgument(
         name='urdf',default_value=str(default_urdf_path),description='加载的urdf文件路径'
@@ -48,7 +48,7 @@ def generate_launch_description():
     spawn_entity = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-topic','/robot_description','-entity','robot','-x','0.0','-y','0.0','-z','0.2',],
+        arguments=['-topic','/robot_description','-entity','robot','-x','-5.5','-y','-3.5','-z','0.12',],
         parameters=[{'use_sim_time':LaunchConfiguration('use_sim_time')}]
     )
 

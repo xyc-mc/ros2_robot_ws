@@ -24,7 +24,7 @@ def generate_launch_description():
     rviz_cfg = LaunchConfiguration('rviz_cfg')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
-        'use_sim_time', default_value='false',
+        'use_sim_time', default_value='true',
         description='Use simulation (Gazebo) clock if true'
     )
     declare_config_path_cmd = DeclareLaunchArgument(
@@ -32,7 +32,7 @@ def generate_launch_description():
         description='Yaml config file path'
     )
     declare_config_file_cmd = DeclareLaunchArgument(
-        'config_file', default_value='velodyne.yaml',
+        'config_file', default_value='mid360.yaml',
         description='Config file'
     )
     declare_rviz_cmd = DeclareLaunchArgument(

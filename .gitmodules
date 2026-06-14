@@ -1,0 +1,3 @@
+[submodule "src/FAST_LIO_LOCALIZATION2"]
+	path = src/FAST_LIO_LOCALIZATION2
+	url = https://github.com/xyc-mc/FAST_LIO_LOCALIZATION2.git

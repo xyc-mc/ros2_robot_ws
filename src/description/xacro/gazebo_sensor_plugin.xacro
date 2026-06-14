@@ -1,93 +1,5 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:macro name="gazebo_sensor_plugin">
-        <!-- <gazebo reference="laser_link">
-            <sensor name="laserscan" type="ray">
-                <plugin name="laserscan" filename="libgazebo_ros_ray_sensor.so">
-                    <ros>
-                        <namespace>/</namespace>
-                        <remapping>~/out:=scan</remapping>
-                    </ros>
-                    <output_type>sensor_msgs/LaserScan</output_type>
-                    <frame_name>laser_link</frame_name>
-                </plugin>
-                <always_on>true</always_on>
-                <visualize>true</visualize>
-                <update_rate>100</update_rate>
-                <pose>0 0 0 0 0 0</pose>
-                <ray>
-                    <scan>
-                        <horizontal>
-                            <samples>360</samples>
-                            <resolution>1.000000</resolution>
-                            <min_angle>0.000000</min_angle>
-                            <max_angle>6.280000</max_angle>
-                        </horizontal>
-                    </scan>
-                    <range>
-                        <min>0.120000</min>
-                        <max>8.0</max>
-                        <resolution>0.015000</resolution>
-                    </range>
-                    <noise>
-                        <type>gaussian</type>
-                        <mean>0.0</mean>
-                        <stddev>0.01</stddev>
-                    </noise>
-                </ray>
-            </sensor>
-        </gazebo> -->
-
-        <gazebo reference="laser_link">
-            <sensor name="velodyne-VLP16" type="ray">
-            <pose>0 0 0 0 0 0</pose>
-            <visualize>false</visualize>
-            <update_rate>10</update_rate>
-            <ray>
-                <scan>
-                <horizontal>
-                    <samples>440</samples>
-                    <resolution>1</resolution>
-                    <min_angle>-3.141592653589793</min_angle>
-                    <max_angle>3.141592653589793</max_angle>
-                </horizontal>
-                <vertical>
-                    <samples>16</samples>
-                    <resolution>1</resolution>
-                    <min_angle>-0.2617993877991494</min_angle>
-                    <max_angle> 0.2617993877991494</max_angle>
-                </vertical>
-                </scan>
-                <range>
-                <min>0.3</min>
-                <max>131.0</max>
-                <resolution>0.001</resolution>
-                </range>
-                <noise>
-                <type>gaussian</type>
-                <mean>0.0</mean>
-                <stddev>0.0</stddev>
-                </noise>
-            </ray>
-            <plugin filename="libgazebo_ros_velodyne_laser.so" name="gazebo_ros_laser_controller">
-                <ros>
-                <namespace>/</namespace>
-                <remapping>~/out:=velodyne_points</remapping>
-                </ros>
-                <frame_name>laser_link</frame_name>
-                <organize_cloud>false</organize_cloud>
-                <min_range>0.9</min_range>
-                <max_range>130.0</max_range>
-                <gaussian_noise>0.008</gaussian_noise>
-
-            </plugin>
-            </sensor>
-        </gazebo>
-
-    </xacro:macro>
-
-        
-
     <gazebo reference="imu_link">
         <sensor name="imu_sensor" type="imu">
         <plugin name="imu_plugin" filename="libgazebo_ros_imu_sensor.so">
@@ -95,6 +7,7 @@
                 <namespace>/</namespace>
                 <remapping>~/out:=imu</remapping>
             </ros>
+            <frame_name>imu_link</frame_name>
             <initial_orientation_as_reference>false</initial_orientation_as_reference>
         </plugin>
         <update_rate>100</update_rate>
@@ -160,18 +73,26 @@
 
 <gazebo reference="camera_link">
     <sensor type="depth" name="camera_sensor">
+        <visualize>false</visualize>
         <plugin name="depth_camera" filename="libgazebo_ros_camera.so">
             <frame_name>camera_optical_link</frame_name>
+            <camera_name>camera_sensor</camera_name>
+            <min_depth>0.15</min_depth>
+            <max_depth>15.0</max_depth>
         </plugin>
-        <always_on>true</always_on>
-        <update_rate>10</update_rate>
+        <always_on>false</always_on>
+        <update_rate>5</update_rate>
         <camera name="camera">
             <horizontal_fov>1.5009831567</horizontal_fov>
             <image>
-                <width>800</width>
-                <height>600</height>
+                <width>320</width>
+                <height>240</height>
                 <format>R8G8B8</format>
             </image>
+            <clip>
+                <near>0.15</near>
+                <far>15.0</far>
+            </clip>
             <distortion>
                 <k1>0.0</k1>
                 <k2>0.0</k2>

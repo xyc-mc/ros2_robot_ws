@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:include filename="$(find description)/xacro/common_inertia.xacro"/>
-    <xacro:macro name="base_xacro" params="length radius">
-        <link name="base_footprint"/>
+    <xacro:macro name="base_xacro" params="length width height wheel_radius">
         <link name="base_link">
             <!-- 部件的外观描述-->
             <visual>
@@ -10,7 +9,7 @@
                 <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
                 <!-- 几何形状-->
                 <geometry>
-                    <cylinder radius="${radius}" length="${length}"/>
+                    <box size="${length} ${width} ${height}"/>
                 </geometry>
                 <!-- 材质颜色-->
                 <material name='white'>
@@ -22,7 +21,7 @@
                 <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
                 <!-- 几何形状-->
                 <geometry>
-                    <cylinder radius="${radius}" length="${length}"/>
+                    <box size="${length} ${width} ${height}"/>
                 </geometry>
                 <!-- 材质颜色-->
                 <material name='white'>
@@ -30,14 +29,8 @@
                 </material>
             </collision>
 
-            <xacro:cylinder_inertia m="1.0" r="${radius}" h="${length}"/>
+            <xacro:box_inertia m="1.8" w="${length}" h="${width}" d="${height}"/>
         </link>
-
-        <joint name="joint_name" type="fixed">
-            <origin xyz="0.0 0.0 ${length/2.0+0.032-0.001}" rpy="0.0 0.0 0.0"/>
-            <parent link="base_footprint"/>
-            <child link="base_link"/>
-        </joint>
     </xacro:macro>
     
 </robot>
