@@ -20,11 +20,11 @@ def generate_launch_description():
 
     return LaunchDescription([
         
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                [get_package_share_directory('driver'),'/launch','/gazebo.launch.py']
-            ),
-        ),
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource(
+        #         [get_package_share_directory('driver'),'/launch','/gazebo.launch.py']
+        #     ),
+        # ),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [get_package_share_directory('fastlio2_wp'),'/launch','/mapping.launch.py']
