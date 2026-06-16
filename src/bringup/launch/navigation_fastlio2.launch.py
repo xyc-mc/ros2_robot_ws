@@ -25,6 +25,7 @@ def generate_launch_description():
     navigation_fastlio2_pkg = get_package_share_directory("navigation_fastlio2")
     fast_lio_localization_pkg = get_package_share_directory("fast_lio_localization")
     terrain_analysis_pkg = get_package_share_directory('terrain_analysis')
+    terrain_analysis_ext_pkg = get_package_share_directory('terrain_analysis_ext')
     
     return LaunchDescription([
         
@@ -49,6 +50,12 @@ def generate_launch_description():
                 launch_file_path=os.path.join(terrain_analysis_pkg,"launch","terrain_analysis.launch")
             ),
         ),
+
+        IncludeLaunchDescription(
+            launch_description_source=AnyLaunchDescriptionSource(
+                launch_file_path=os.path.join(terrain_analysis_ext_pkg,"launch","terrain_analysis_ext.launch")
+            ),
+        ),
         
         IncludeLaunchDescription(
             launch_description_source=PythonLaunchDescriptionSource(
@@ -63,7 +70,7 @@ def generate_launch_description():
             launch_arguments={
                 'pcd_map_topic': '/cloud_pcd',
                 'use_sim_time': 'true',
-                'config_path': '/home/neepu/ros2_robot_ws/src/bringup/config'
+                'config_path': '/home/neepu/ros2_robot_ws/src/bringup/config',
                 'map': '/home/neepu/ros2_robot_ws/src/maps_manage/map.pcd'
             }.items(),
         ),
