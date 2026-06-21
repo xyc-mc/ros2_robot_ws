@@ -24,6 +24,7 @@ def generate_launch_description():
 
     navigation_fastlio2_pkg = get_package_share_directory("navigation_fastlio2")
     fast_lio_localization_pkg = get_package_share_directory("fast_lio_localization")
+    grid_map_terrain_analysis_pkg = get_package_share_directory('grid_map_terrain_analysis')
     terrain_analysis_pkg = get_package_share_directory('terrain_analysis')
     terrain_analysis_ext_pkg = get_package_share_directory('terrain_analysis_ext')
     
@@ -45,15 +46,25 @@ def generate_launch_description():
             executable='lio_interface'
         ),
 
-        IncludeLaunchDescription(
-            launch_description_source=AnyLaunchDescriptionSource(
-                launch_file_path=os.path.join(terrain_analysis_pkg,"launch","terrain_analysis.launch")
-            ),
-        ),
+        # IncludeLaunchDescription(
+        #     launch_description_source=AnyLaunchDescriptionSource(
+        #         launch_file_path=os.path.join(terrain_analysis_pkg,"launch","terrain_analysis.launch")
+        #     ),
+        # ),
+
+        # IncludeLaunchDescription(
+        #     launch_description_source=AnyLaunchDescriptionSource(
+        #         launch_file_path=os.path.join(terrain_analysis_ext_pkg,"launch","terrain_analysis_ext.launch")
+        #     ),
+        # ),
 
         IncludeLaunchDescription(
-            launch_description_source=AnyLaunchDescriptionSource(
-                launch_file_path=os.path.join(terrain_analysis_ext_pkg,"launch","terrain_analysis_ext.launch")
+            launch_description_source=PythonLaunchDescriptionSource(
+                launch_file_path=os.path.join(
+                    grid_map_terrain_analysis_pkg,
+                    "launch",
+                    "grid_map_terrain.launch.py"
+                )
             ),
         ),
         

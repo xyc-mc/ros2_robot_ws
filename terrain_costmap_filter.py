@@ -35,7 +35,7 @@ class TerrainCostmapFilter(Node):
         self.declare_parameter("input_topic", "/terrain_map")
         self.declare_parameter("output_topic", "/terrain_map_costmap")
         self.declare_parameter("height_field", "intensity")
-        self.declare_parameter("passable_height", 0.1)
+        self.declare_parameter("passable_height", 0.6)
         self.declare_parameter("qos_depth", 5)
         self.declare_parameter("qos_reliability", "reliable")
         self.declare_parameter("output_frame_id", "")

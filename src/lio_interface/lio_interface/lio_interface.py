@@ -13,17 +13,21 @@ class LioInterface(Node):
         super().__init__('lio_interface_node')
 
         self.cur_map_to_odom = None
+        self.cur_lio_odom = None
         self.warned_missing_map_to_odom_for_cloud = False
+        self.warned_missing_lio_odom_for_cloud = False
         self.warned_missing_map_to_odom_for_odom = False
         self.warned_invalid_cloud = False
 
         self.declare_parameter('map_frame', 'map')
         self.declare_parameter('sensor_frame', 'sensor')
+        self.declare_parameter('input_cloud_topic', '/cloud_registered_body')
         self.declare_parameter('body_to_sensor_xyz', [0.0, 0.0, 0.0])
         self.declare_parameter('body_to_sensor_rpy', [0.0, 0.0, 0.0])
 
         self.map_frame = self.get_parameter('map_frame').value
         self.sensor_frame = self.get_parameter('sensor_frame').value
+        self.input_cloud_topic = self.get_parameter('input_cloud_topic').value
         body_to_sensor_xyz = self.read_vector_parameter('body_to_sensor_xyz', 3)
         body_to_sensor_rpy = self.read_vector_parameter('body_to_sensor_rpy', 3)
         self.T_body_to_sensor = self.xyz_rpy_to_matrix(body_to_sensor_xyz, body_to_sensor_rpy)
@@ -32,7 +36,7 @@ class LioInterface(Node):
         self.pointcloud_pub = self.create_publisher(PointCloud2, '/registered_scan', 10)
 
         self.lio_odom_sub = self.create_subscription(Odometry, '/Odometry', self.lio_odom_callback, 10)
-        self.lio_pointcloud_sub = self.create_subscription(PointCloud2, '/cloud_registered', self.lio_pointcloud_callback, 10)
+        self.lio_pointcloud_sub = self.create_subscription(PointCloud2, self.input_cloud_topic, self.lio_pointcloud_callback, 10)
         self.map_to_odom_sub = self.create_subscription(Odometry, "/map_to_odom", self.cb_save_map_to_odom, 1)
         
     def lio_pointcloud_callback(self, msg):
@@ -41,12 +45,17 @@ class LioInterface(Node):
                 self.get_logger().warn('Waiting for /map_to_odom before publishing /registered_scan')
                 self.warned_missing_map_to_odom_for_cloud = True
             return
+        if self.cur_lio_odom is None:
+            if not self.warned_missing_lio_odom_for_cloud:
+                self.get_logger().warn('Waiting for /Odometry before publishing /registered_scan')
+                self.warned_missing_lio_odom_for_cloud = True
+            return
 
         try:
-            msg_pointcloud = self.transform_cloud_to_map(msg, self.cur_map_to_odom)
+            msg_pointcloud = self.transform_cloud_to_map(msg, self.cur_map_to_odom, self.cur_lio_odom)
         except ValueError as exc:
             if not self.warned_invalid_cloud:
-                self.get_logger().error(f'Failed to transform /cloud_registered: {exc}')
+                self.get_logger().error(f'Failed to transform {self.input_cloud_topic}: {exc}')
                 self.warned_invalid_cloud = True
             return
 
@@ -77,7 +86,7 @@ class LioInterface(Node):
         transform[:3, 3] = xyz
         return transform
         
-    def transform_cloud_to_map(self, cloud_msg, map_to_camera_init_msg):
+    def transform_cloud_to_map(self, cloud_msg, map_to_camera_init_msg, camera_init_to_body_msg):
         fields = {field.name: field for field in cloud_msg.fields}
         required_fields = ('x', 'y', 'z')
         for field_name in required_fields:
@@ -97,7 +106,10 @@ class LioInterface(Node):
         if len(raw_data) < expected_size:
             raise ValueError('PointCloud2 data is smaller than row_step * height')
 
-        transform = self.pose_to_matrix(map_to_camera_init_msg.pose.pose)
+        transform = (
+            self.pose_to_matrix(map_to_camera_init_msg.pose.pose) @
+            self.pose_to_matrix(camera_init_to_body_msg.pose.pose)
+        )
         rotation = transform[:3, :3]
         translation = transform[:3, 3]
 
@@ -141,6 +153,8 @@ class LioInterface(Node):
         return transformed_msg
 
     def lio_odom_callback(self, msg):
+        self.cur_lio_odom = msg
+
         if self.cur_map_to_odom is None:
             if not self.warned_missing_map_to_odom_for_odom:
                 self.get_logger().warn('Waiting for /map_to_odom before publishing /state_estimation')

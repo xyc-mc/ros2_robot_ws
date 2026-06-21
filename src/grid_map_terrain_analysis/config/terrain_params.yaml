@@ -1,0 +1,58 @@
+grid_map_terrain_node:
+  ros__parameters:
+    input_cloud_topic: /registered_scan
+    odom_topic: /state_estimation
+    terrain_map_topic: /terrain_map
+    elevation_map_topic: /elevation_map
+    traversability_map_topic: /traversability_map
+    elevation_map_cloud_topic: /elevation_map_cloud
+    traversability_map_cloud_topic: /traversability_map_cloud
+    terrain_risk_cloud_topic: /terrain_risk_cloud
+    dynamic_obstacle_cloud_topic: /dynamic_obstacle_cloud
+    terrain_height_cloud_topic: /terrain_height_cloud
+    map_frame: map
+
+    map_length_x: 6.0
+    map_length_y: 6.0
+    resolution: 0.05
+    publish_rate: 10.0
+
+    min_rel_z: -0.6
+    max_rel_z: 1.0
+    dis_ratio_z: 0.2
+    min_ground_relative_height: -0.05
+    max_ground_relative_height: 0.6
+    min_points_per_cell: 1
+    elevation_quantile: 0.25
+
+    normal_radius_cells: 2
+    roughness_radius_cells: 2
+    step_radius_cells: 2
+
+    height_safe: 0.03
+    height_block: 0.18
+    slope_safe: 0.35
+    slope_block: 0.70
+    roughness_safe: 0.02
+    roughness_block: 0.08
+    step_safe: 0.04
+    step_block: 0.18
+    unknown_traversability: 0.45
+    min_density_for_confidence: 2
+    risk_gamma: 1.0
+    risk_obstacle_threshold: 0.65
+
+    dynamic_enabled: true
+    dynamic_hit_gain: 0.35
+    dynamic_free_decay: 0.55
+    dynamic_time_decay: 0.85
+    dynamic_keep_time: 3.0
+    dynamic_min_height_risk: 0.35
+    dynamic_risk_threshold: 0.65
+
+    dynamic_decay_time: 0.8
+
+    publish_only_blocking_points: false
+    blocking_intensity_threshold: 0.15
+    publish_debug_maps: true
+    publish_debug_clouds: true
