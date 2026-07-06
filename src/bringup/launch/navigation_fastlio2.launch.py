@@ -58,15 +58,15 @@ def generate_launch_description():
         #     ),
         # ),
 
-        IncludeLaunchDescription(
-            launch_description_source=PythonLaunchDescriptionSource(
-                launch_file_path=os.path.join(
-                    grid_map_terrain_analysis_pkg,
-                    "launch",
-                    "grid_map_terrain.launch.py"
-                )
-            ),
-        ),
+        # IncludeLaunchDescription(
+        #     launch_description_source=PythonLaunchDescriptionSource(
+        #         launch_file_path=os.path.join(
+        #             grid_map_terrain_analysis_pkg,
+        #             "launch",
+        #             "grid_map_terrain.launch.py"
+        #         )
+        #     ),
+        # ),
         
         IncludeLaunchDescription(
             launch_description_source=PythonLaunchDescriptionSource(
