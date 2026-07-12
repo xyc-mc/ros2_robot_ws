@@ -1,36 +1,84 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot">
-    
-    <xacro:include filename="$(find description)/xacro/base.urdf.xacro"/>
-    <xacro:include filename="$(find description)/xacro/imu.urdf.xacro"/>
-    <xacro:include filename="$(find description)/xacro/camera.urdf.xacro"/>
-    <xacro:include filename="$(find description)/xacro/wheel.urdf.xacro"/>
-    <xacro:include filename="$(find description)/xacro/gazebo_sensor_plugin.xacro"/>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="a1">
+    <xacro:include filename="$(find description)/xacro/a1/const.xacro"/>
+    <xacro:include filename="$(find description)/xacro/a1/materials.xacro"/>
+    <xacro:include filename="$(find description)/xacro/a1/leg.xacro"/>
+    <xacro:include filename="$(find description)/xacro/a1_gazebo.xacro"/>
     <xacro:include filename="$(find description)/xacro/ros2_control.xacro"/>
     <xacro:include filename="$(find ros2_livox_simulation)/urdf/mid360.xacro"/>
 
-    <xacro:property name="base_length" value="0.42"/>
-    <xacro:property name="base_width" value="0.28"/>
-    <xacro:property name="base_height" value="0.10"/>
-    <xacro:property name="wheel_radius" value="0.055"/>
-    <xacro:property name="wheel_width" value="0.045"/>
-    <xacro:property name="wheel_x" value="0.145"/>
-    <xacro:property name="wheel_y" value="0.165"/>
-    <xacro:property name="wheel_z" value="-0.047"/>
+    <xacro:arg name="enable_lidar" default="true"/>
+    <xacro:arg name="lidar_downsample" default="5"/>
+    <xacro:arg name="lidar_update_rate" default="10"/>
+    <xacro:arg name="lidar_visualize" default="false"/>
 
-    <xacro:base_xacro length="${base_length}" width="${base_width}" height="${base_height}" wheel_radius="${wheel_radius}"/>
-    <xacro:imu_xacro xyz="0.0 0.0 0.065"/>
-    <xacro:camera_xacro xyz="0.20 0.0 0.060"/>
-    <xacro:mid360 name="livox_frame" parent="base_link" topic="/livox/lidar">
-        <origin xyz="0.0 0.0 0.080" rpy="0.0 0.0 0.0"/>
-    </xacro:mid360>
+    <!-- Kinematic root; trunk carries the physical body properties. -->
+    <link name="base_link"/>
 
-    <xacro:wheel_xacro wheel_name="front_left_wheel" xyz="${wheel_x} ${wheel_y} ${wheel_z}" radius="${wheel_radius}" width="${wheel_width}"/>
-    <xacro:wheel_xacro wheel_name="front_right_wheel" xyz="${wheel_x} ${-wheel_y} ${wheel_z}" radius="${wheel_radius}" width="${wheel_width}"/>
-    <xacro:wheel_xacro wheel_name="rear_left_wheel" xyz="${-wheel_x} ${wheel_y} ${wheel_z}" radius="${wheel_radius}" width="${wheel_width}"/>
-    <xacro:wheel_xacro wheel_name="rear_right_wheel" xyz="${-wheel_x} ${-wheel_y} ${wheel_z}" radius="${wheel_radius}" width="${wheel_width}"/>
+    <link name="trunk">
+        <visual>
+            <geometry>
+                <mesh filename="package://description/meshes/a1/trunk.dae" scale="1 1 1"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${trunk_length} ${trunk_width} ${trunk_height}"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="${trunk_com_x} ${trunk_com_y} ${trunk_com_z}" rpy="0 0 0"/>
+            <mass value="${trunk_mass}"/>
+            <inertia ixx="${trunk_ixx}" ixy="${trunk_ixy}" ixz="${trunk_ixz}"
+                     iyy="${trunk_iyy}" iyz="${trunk_iyz}" izz="${trunk_izz}"/>
+        </inertial>
+    </link>
+    <joint name="base_link_to_trunk" type="fixed">
+        <parent link="base_link"/>
+        <child link="trunk"/>
+    </joint>
 
-    <xacro:ros2_control />
+    <link name="imu_link">
+        <inertial>
+            <mass value="0.001"/>
+            <inertia ixx="0.000001" ixy="0" ixz="0"
+                     iyy="0.000001" iyz="0" izz="0.000001"/>
+        </inertial>
+    </link>
+    <joint name="imu_joint" type="fixed">
+        <parent link="trunk"/>
+        <child link="imu_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+    <gazebo reference="imu_joint">
+        <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
 
-    
+    <!-- Reuse the ROS 2 MID360 simulator already present in this workspace. -->
+    <xacro:if value="$(arg enable_lidar)">
+        <xacro:mid360
+            name="livox_frame"
+            parent="trunk"
+            topic="/livox/lidar"
+            >
+            <origin xyz="0.2 0 0.08" rpy="0 ${pi/4} 0"/>
+        </xacro:mid360>
+    </xacro:if>
+
+    <xacro:leg name="FR" mirror="-1" mirror_dae="False" front_hind="1" front_hind_dae="True">
+        <origin xyz="${leg_offset_x} ${-leg_offset_y} 0" rpy="0 0 0"/>
+    </xacro:leg>
+    <xacro:leg name="FL" mirror="1" mirror_dae="True" front_hind="1" front_hind_dae="True">
+        <origin xyz="${leg_offset_x} ${leg_offset_y} 0" rpy="0 0 0"/>
+    </xacro:leg>
+    <xacro:leg name="RR" mirror="-1" mirror_dae="False" front_hind="-1" front_hind_dae="False">
+        <origin xyz="${-leg_offset_x} ${-leg_offset_y} 0" rpy="0 0 0"/>
+    </xacro:leg>
+    <xacro:leg name="RL" mirror="1" mirror_dae="True" front_hind="-1" front_hind_dae="False">
+        <origin xyz="${-leg_offset_x} ${leg_offset_y} 0" rpy="0 0 0"/>
+    </xacro:leg>
+
+    <xacro:a1_ros2_control/>
+    <xacro:a1_gazebo/>
 </robot>

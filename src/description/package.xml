@@ -3,17 +3,23 @@
 <package format="3">
   <name>description</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Unitree A1 description and Gazebo sensor integration.</description>
   <maintainer email="275759366@qq.com">ubuntu</maintainer>
-  <license>TODO: License declaration</license>
+  <license>BSD-3-Clause</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>a1_controller</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros2_control</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>ros2_livox_simulation</exec_depend>
+  <exec_depend>xacro</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
+    <gazebo_ros gazebo_model_path="${prefix}/.."/>
   </export>
 </package>

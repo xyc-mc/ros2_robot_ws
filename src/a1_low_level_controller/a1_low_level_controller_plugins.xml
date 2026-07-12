@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<library path="a1_effort_controller">
+  <class
+    name="a1_low_level_controller/A1EffortController"
+    type="a1_low_level_controller::A1EffortController"
+    base_class_type="controller_interface::ControllerInterface">
+    <description>
+      Synchronous joint PD effort controller for the simulated Unitree A1.
+    </description>
+  </class>
+</library>
